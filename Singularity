@@ -12,6 +12,7 @@ From: dynverse/dynwrap:py3.6
 
 %post
     chmod -R a+r /code
+    chmod a+x /code
     pip install Cython
     pip install git+https://github.com/dynverse/pywishbone --upgrade --upgrade-strategy only-if-needed
 
