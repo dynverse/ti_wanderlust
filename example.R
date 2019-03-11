@@ -1,4 +1,7 @@
-set.seed(1)
+#!/usr/local/bin/Rscript
+
+# generate dataset with certain seed
+set.seed(2)
 data <- dyntoy::generate_dataset(
   id = "specific_example/wanderlust",
   num_cells = 99,
@@ -6,3 +9,11 @@ data <- dyntoy::generate_dataset(
   model = "linear"
 )
 params <- list()
+
+# add method specific args (if needed)
+data$params <- list()
+data$seed <- 1
+
+# write example dataset to file
+file <- commandArgs(trailingOnly = TRUE)[[1]]
+dynutils::write_h5(data[c("counts", "expression", "params", "prior_information")], file)
