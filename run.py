@@ -2,10 +2,10 @@
 
 import dynclipy
 task = dynclipy.main()
-task = dynclipy.main(
-  ["--dataset", "/code/example.h5", "--output", "/mnt/output"],
-  "/code/definition.yml"
-)
+# task = dynclipy.main(
+#   ["--dataset", "/code/example.h5", "--output", "/mnt/output"],
+#   "/code/definition.yml"
+# )
 
 import wishbone
 import os
@@ -65,7 +65,7 @@ dimred.index.name = "cell_id"
 dimred = dimred.reset_index()
 
 # save
-dataset = dynclipy.wrap_data(cell_ids = dimred.index)
+dataset = dynclipy.wrap_data(cell_ids = dimred["cell_id"])
 dataset.add_linear_trajectory(
   pseudotime = pseudotime
 )
