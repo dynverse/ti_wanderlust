@@ -30,7 +30,6 @@ wrapper:
   topology_inference: fixed
   trajectory_types:
   - linear
-  example:
   input_required:
   - counts
   - start_id
