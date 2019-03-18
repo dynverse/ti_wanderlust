@@ -20,7 +20,7 @@ checkpoints = {}
 #   ____________________________________________________________________________
 #   Load data                                                               ####
 task["counts"].to_csv("/counts.csv")
-
+  
 p = task["params"]
 
 # get start cell(s)
