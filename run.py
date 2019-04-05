@@ -1,4 +1,12 @@
-import os
+#!/usr/local/bin/python
+
+import dynclipy
+task = dynclipy.main()
+# task = dynclipy.main(
+#   ["--dataset", "/code/example.h5", "--output", "/mnt/output"],
+#   "/code/definition.yml"
+# )
+
 import wishbone
 import os
 import sys
@@ -11,14 +19,18 @@ checkpoints = {}
 
 #   ____________________________________________________________________________
 #   Load data                                                               ####
-p = json.load(open("/ti/input/params.json", "r"))
+task["counts"].to_csv("/counts.csv")
+  
+p = task["parameters"]
 
 # get start cell(s)
-start_cell = json.load(open("/ti/input/start_id.json"))[0]
+start_cell = task["priors"]["start_id"]
+if isinstance(start_cell, list):
+  start_cell = np.random.choice(start_cell)
 
 # get markers if given
-if os.path.exists("/ti/input/features_id.json"):
-  markers = json.load(open("/ti/input/features_id.json"))
+if "features_id" in task["priors"]:
+  markers = task["priors"]["features_id"]
 else:
   markers = "~"
 
@@ -27,7 +39,7 @@ checkpoints["method_afterpreproc"] = time.time()
 #   ____________________________________________________________________________
 #   Create trajectory                                                       ####
 # normalise data
-scdata = wishbone.wb.SCData.from_csv("/ti/input/counts.csv", data_type='sc-seq', normalize=p["normalise"])
+scdata = wishbone.wb.SCData.from_csv("/counts.csv", data_type='sc-seq', normalize=p["normalise"])
 scdata.run_pca()
 scdata.run_diffusion_map(knn=p["knn"], epsilon=p["epsilon"], n_diffusion_components=p["n_diffusion_components"], n_pca_components=p["n_pca_components"], markers=markers)
 
@@ -46,18 +58,17 @@ checkpoints["method_aftermethod"] = time.time()
 # pseudotime
 pseudotime = wb.trajectory.reset_index()
 pseudotime.columns = ["cell_id", "pseudotime"]
-pseudotime.to_csv("/ti/output/pseudotime.csv", index=False)
 
 # dimred
 dimred = wb.scdata.diffusion_eigenvectors
 dimred.index.name = "cell_id"
-dimred.reset_index().to_csv("/ti/output/dimred.csv", index=False)
+dimred = dimred.reset_index()
 
-# cell ids
-cell_ids = pd.DataFrame({
-  "cell_ids": dimred.index
-})
-cell_ids.to_csv("/ti/output/cell_ids.csv", index=False)
-
-# timings
-json.dump(checkpoints, open("/ti/output/timings.json", "w"))
+# save
+dataset = dynclipy.wrap_data(cell_ids = dimred["cell_id"])
+dataset.add_linear_trajectory(
+  pseudotime = pseudotime
+)
+dataset.add_dimred(dimred = dimred)
+dataset.add_timings(timings = checkpoints)
+dataset.write_output(task["output"])

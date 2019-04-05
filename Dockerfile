@@ -1,11 +1,9 @@
-FROM dynverse/dynwrap:py3.6
+FROM dynverse/dynwrappy:v0.1.0
 
-RUN pip install Cython
+ARG GITHUB_PAT
 
-# install wishbone
 RUN pip install git+https://github.com/dynverse/pywishbone --upgrade --upgrade-strategy only-if-needed
 
-LABEL version 0.1.4
+COPY definition.yml run.py example.sh /code/
 
-ADD . /code
-ENTRYPOINT python /code/run.py
+ENTRYPOINT ["/code/run.py"]

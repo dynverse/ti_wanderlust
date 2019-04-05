@@ -1,78 +1,88 @@
-id: wanderlust
-docker_repository: dynverse/ti_wanderlust
-singularity_collection: 1587
-container_url: https://github.com/dynverse/ti_wanderlust
-name: Wanderlust
-source: tool
-implementation_id: wishbone
-platform: Python
-parameters:
-  normalise:
-    type: logical
-    default: yes
-  knn:
-    description: k-nearest neighbours for diffusion
-    type: integer
-    lower: 15
-    default: 25
-    upper: 100
-  n_diffusion_components:
-    description: number of diffusion components
-    type: integer
-    lower: 3
-    default: 3
-    upper: 20
-  n_pca_components:
-    description: number of pca components
-    type: integer
-    lower: 15
-    default: 30
-    upper: 100
-  k:
-    description: k parameter
-    type: integer
-    lower: 15
-    default: 25
-    upper: 100
-  num_waypoints:
-    description: number of waypoints
-    type: integer
-    lower: 100
-    default: 250
-    upper: 500
-  epsilon:
-    description: epsilon
-    type: numeric
-    lower: 0.1
-    default: 1
-    upper: 5
-input:
-  format: text
-  required:
+method:
+  id: wanderlust
+  name: Wanderlust
+  tool_id: wishbone
+  source: tool
+  platform: Python
+  url: https://github.com/ManuSetty/wishbone
+  license: GPL-2
+  authors:
+  - given: Manu
+    family: Setty
+    email: manu.talanki@gmail.com
+    github: ManuSetty
+  - given: Dana
+    family: Pe'er
+    email: peerster@gmail.com
+    ORCID: 0000-0002-9259-8817
+
+manuscript:
+  doi: 10.1016/j.cell.2014.04.005
+  google_scholar_cluster_id: '10038301430146662437'
+  publication_date: '2016-05-02'
+
+container:
+  url: https://github.com/dynverse/ti_wanderlust
+  docker: dynverse/ti_wanderlust
+
+wrapper:
+  type: linear_trajectory
+  topology_inference: fixed
+  trajectory_types:
+  - linear
+  input_required:
   - counts
   - start_id
-  optional:
-  - features_id
-output:
-  format: text
-  outputs:
-  - linear_trajectory
-  - dimred
-  - timings
-wrapper_type: linear_trajectory
-doi: 10.1016/j.cell.2014.04.005
-google_scholar_cluster_id: '10038301430146662437'
-trajectory_types: linear
-topology_inference: fixed
-license: GPL-2
-authors:
-- given: Manu
-  family: Setty
-  email: manu.talanki@gmail.com
-  github: ManuSetty
-- given: Dana
-  family: Pe'er
-  email: peerster@gmail.com
-  ORCID: 0000-0002-9259-8817
-publication_date: '2016-05-02'
-code_url: https://github.com/ManuSetty/wishbone
+
+parameters:
+  - id: normalise
+    type: logical
+    default: yes
+  - id: knn
+    description: k-nearest neighbours for diffusion
+    type: integer
+    distribution:
+      type: uniform
+      lower: 15
+      upper: 100
+    default: 25
+  - id: n_diffusion_components
+    description: number of diffusion components
+    type: integer
+    distribution:
+      type: uniform
+      lower: 3
+      upper: 20
+    default: 3
+  - id: n_pca_components
+    description: number of pca components
+    type: integer
+    distribution:
+      type: uniform
+      lower: 15
+      upper: 100
+    default: 30
+  - id: k
+    description: k parameter
+    type: integer
+    distribution:
+      type: uniform
+      lower: 15
+      upper: 100
+    default: 25
+  - id: num_waypoints
+    description: number of waypoints
+    type: integer
+    distribution:
+      type: uniform
+      lower: 100
+      upper: 500
+    default: 250
+  - id: epsilon
+    description: epsilon
+    type: numeric
+    distribution:
+      type: uniform
+      lower: 0.1
+      upper: 5
+    default: 1
